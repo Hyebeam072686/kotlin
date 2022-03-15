@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
-import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.utils.JsGenerationContext
@@ -136,7 +135,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
     }
 
     override fun visitCall(expression: IrCall, data: JsGenerationContext): JsStatement {
-        if (expression.symbol.isPureFunction(data)) {
+        if (expression.symbol.isUnitInstanceFunction(data)) {
             return JsEmpty
         }
         if (data.checkIfJsCode(expression.symbol) || data.checkIfAnnotatedWithJsFunc(expression.symbol)) {
@@ -145,7 +144,7 @@ class IrElementToJsStatementTransformer : BaseIrElementToJsNodeTransformer<JsSta
         return translateCall(expression, data, IrElementToJsExpressionTransformer()).withSource(expression, data).makeStmt()
     }
 
-    private fun IrFunctionSymbol.isPureFunction(context: JsGenerationContext): Boolean {
+    private fun IrFunctionSymbol.isUnitInstanceFunction(context: JsGenerationContext): Boolean {
         return owner.origin === JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION &&
                 owner.returnType.classifierOrNull === context.staticContext.backendContext.irBuiltIns.unitClass
     }
