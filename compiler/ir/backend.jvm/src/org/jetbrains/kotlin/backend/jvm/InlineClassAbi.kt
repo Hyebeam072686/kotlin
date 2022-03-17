@@ -152,6 +152,6 @@ val IrFunction.isMultiFieldValueClassFieldGetter: Boolean
     get() = (parent as? IrClass)?.isMultiFieldValueClass == true && this is IrSimpleFunction && extensionReceiverParameter == null &&
             correspondingPropertySymbol?.let {
                 val multiFieldValueClassRepresentation = parentAsClass.multiFieldValueClassRepresentation
-                    ?: error("Multi-field value class must have multiFieldValueClassRepresentation")
+                    ?: error("Multi-field value class must have multiFieldValueClassRepresentation: ${parentAsClass.render()}")
                 it.owner.getter == this && multiFieldValueClassRepresentation.containsPropertyWithName(it.owner.name)
             } == true
