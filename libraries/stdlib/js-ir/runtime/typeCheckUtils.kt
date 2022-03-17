@@ -153,12 +153,11 @@ private fun completeInterfaceCache(ctor: Ctor): IsImplementsCache? {
         }
     }
 
-    val constructor = fastGetPrototype(ctor)?.constructor ?: return null
-    val parentInterfacesCache = completeInterfaceCache(constructor) ?: return interfacesCache
+    val parentInterfacesCache = fastGetPrototype(ctor)?.constructor?.let(::completeInterfaceCache)
 
     if (interfacesCache == null) return parentInterfacesCache
+    if (parentInterfacesCache != null) interfacesCache.extendCacheWith(parentInterfacesCache)
 
-    interfacesCache.extendCacheWith(parentInterfacesCache)
     interfacesCache.isComplete = true
 
     return interfacesCache
