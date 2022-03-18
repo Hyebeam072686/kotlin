@@ -282,14 +282,14 @@ abstract class DataClassMembersGenerator(
 
     // Entry for psi2ir
     fun generateComponentFunction(function: FunctionDescriptor, irProperty: IrProperty) {
-        buildMember(function) {
+        buildMember(function, irProperty.startOffset, irProperty.endOffset) {
             generateComponentFunction(irProperty)
         }
     }
 
     // Entry for fir2ir
     fun generateComponentFunction(irFunction: IrFunction, irProperty: IrProperty) {
-        buildMember(irFunction) {
+        buildMember(irFunction, irProperty.startOffset, irProperty.endOffset) {
             generateComponentFunction(irProperty)
         }
     }
