@@ -211,7 +211,7 @@ internal object LLFirSessionFactory {
         configureSession: (LLFirSession.() -> Unit)?,
     ): LLFirLibrariesSession = librariesCache.cached(sourceModule) {
         checkCanceled()
-        val searchScope = project.moduleScopeProvider.getModuleLibrariesScope(sourceModule)
+        val searchScope = ProjectScope.getLibrariesScope(project)
         LLFirLibrariesSession(project, builtinTypes).apply session@{
             registerModuleData(KtModuleBasedModuleData(sourceModule).apply { bindSession(this@session) })
             registerIdeComponents(project)
