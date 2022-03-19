@@ -17,12 +17,12 @@ import org.junit.platform.commons.util.AnnotationUtils
 @ExtendWith(ExecutionOnOsCondition::class)
 annotation class OsCondition(
     val supportedOn: Array<OS> = [OS.LINUX, OS.MAC, OS.WINDOWS],
-    val enabledOnCI: Array<OS> = [OS.LINUX]
+    val enabledOnCI: Array<OS> = [OS.LINUX, OS.WINDOWS]
 )
 
 internal class ExecutionOnOsCondition : ExecutionCondition {
     private val isUnderTeamcity = System.getenv("TEAMCITY_VERSION") != null
-    private val enabledByDefault = ConditionEvaluationResult.enabled("@GradleTestOsCondition is not present")
+    private val disabledByDefault = ConditionEvaluationResult.disabled("@OsCondition is not present")
 
     private val enabledOnCurrentOs = "Enabled on operating system: " + System.getProperty("os.name")
     private val notSupportedOnCurrentOs = "Test is not supported on operating system: " + System.getProperty("os.name")
@@ -36,11 +36,11 @@ internal class ExecutionOnOsCondition : ExecutionCondition {
 
             return if (!supportedOn.any { it.isCurrentOs })
                 ConditionEvaluationResult.disabled(notSupportedOnCurrentOs)
-            else if (!enabledOnCI.any { it.isCurrentOs } && isUnderTeamcity)
+            else if (isUnderTeamcity && !enabledOnCI.any { it.isCurrentOs })
                 ConditionEvaluationResult.disabled(disabledForCI)
             else ConditionEvaluationResult.enabled(enabledOnCurrentOs)
         }
 
-        return enabledByDefault
+        return disabledByDefault
     }
 }
